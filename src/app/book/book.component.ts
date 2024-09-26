@@ -1,12 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Book } from '../models/book.model';
-import { generate } from 'rxjs';
-import { randomInt } from 'crypto';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-book',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './book.component.html',
   styleUrl: './book.component.css'
 })
@@ -18,6 +16,7 @@ export class BookComponent implements OnInit {
   
   // for everything related to loading data / data that should get loaded when the component gets created
   ngOnInit(): void {
+    // retrieve books
     let savedBooks = localStorage.getItem("books")
 
     this.books = savedBooks ? JSON.parse(savedBooks) : []
@@ -27,7 +26,7 @@ export class BookComponent implements OnInit {
     // checks if these values exist
     if(this.newBookTitle.trim().length && this.newAuthor) {
       let newBook: Book = {
-        id: randomInt(999),
+        id: Date.now(),
         title: this.newBookTitle,
         author: this.newAuthor
       }
@@ -37,7 +36,13 @@ export class BookComponent implements OnInit {
       this.newBookTitle = "";
       this.newAuthor = "";
 
+      // store book
       localStorage.setItem("books", JSON.stringify(this.books))
     }
+  }
+
+  deleteBook(index: number) {
+    this.books.splice(index, 1)
+    localStorage.setItem("books", JSON.stringify(this.books))
   }
 }
